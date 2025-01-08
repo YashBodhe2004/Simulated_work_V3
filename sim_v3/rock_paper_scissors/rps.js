@@ -1,8 +1,22 @@
-function handleUserChoice(choice) {
-    console.log("User chose: " + choice);
-    document.getElementById('result').textContent = "You chose: " + choice;
+let playerScore = 0;
+let computerScore = 0;
+
+function handleUserChoice(playerChoice) {
     const computerChoice = getComputerChoice();
-    document.getElementById('computer-choice').textContent = "Computer chose: " + computerChoice;
+    const result = determineWinner(playerChoice, computerChoice);
+
+    if (result === 'win') {
+        playerScore++;
+        document.getElementById('result').textContent = `You Win! ${playerChoice} beats ${computerChoice}.`;
+    } else if (result === 'lose') {
+        computerScore++;
+        document.getElementById('result').textContent = `You Lose! ${computerChoice} beats ${playerChoice}.`;
+    } else {
+        document.getElementById('result').textContent = `It's a Tie! Both chose ${playerChoice}.`;
+    }
+
+    document.getElementById('computer-choice').textContent = `Computer chose: ${computerChoice}`;
+    updateScores();
 }
 
 function getComputerChoice() {
@@ -11,14 +25,33 @@ function getComputerChoice() {
     return choices[randomIndex];
 }
 
-document.getElementById('rock').addEventListener('click', function() {
-    handleUserChoice('rock');
-});
+function determineWinner(playerChoice, computerChoice) {
+    if (playerChoice === computerChoice) return 'tie';
+    if (
+        (playerChoice === 'rock' && computerChoice === 'scissors') ||
+        (playerChoice === 'paper' && computerChoice === 'rock') ||
+        (playerChoice === 'scissors' && computerChoice === 'paper')
+    ) {
+        return 'win';
+    } else {
+        return 'lose';
+    }
+}
 
-document.getElementById('paper').addEventListener('click', function() {
-    handleUserChoice('paper');
-});
+function updateScores() {
+    document.getElementById('player-score').textContent = playerScore;
+    document.getElementById('computer-score').textContent = computerScore;
+}
 
-document.getElementById('scissors').addEventListener('click', function() {
-    handleUserChoice('scissors');
-});
+function resetGame() {
+    playerScore = 0;
+    computerScore = 0;
+    document.getElementById('result').textContent = 'Game reset. Make your choice!';
+    document.getElementById('computer-choice').textContent = '';
+    updateScores();
+}
+
+document.getElementById('rock').addEventListener('click', () => handleUserChoice('rock'));
+document.getElementById('paper').addEventListener('click', () => handleUserChoice('paper'));
+document.getElementById('scissors').addEventListener('click', () => handleUserChoice('scissors'));
+document.getElementById('reset').addEventListener('click', resetGame);
